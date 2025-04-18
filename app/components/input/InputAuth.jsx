@@ -1,11 +1,4 @@
-export default function InputAuth({
-  type,
-  id,
-  name,
-  placeholder,
-  // value,
-  // onChange,
-}) {
+export default function InputAuth({ type, id, name, placeholder }) {
   return (
     <input
       type={type}
@@ -14,8 +7,6 @@ export default function InputAuth({
       required
       autoComplete="off"
       placeholder={placeholder}
-      // value={value}
-      // onChange={onChange}
       className="p-[14px] w-full rounded-lg border border-[#D4D7E3] text-sm lg:text-base 2xl:text-lg placeholder:text-sm lg:placeholder:text-base 2xl:placeholder:text-lg placeholder:text-[#8897AD] outline-none focus:border-2 focus:border-[#162D3A]/70"
     />
   );

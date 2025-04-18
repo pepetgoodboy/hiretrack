@@ -1,64 +1,65 @@
 "use client";
 
-import LabelAuth from "../label/LabelAuth";
-import InputAuth from "../input/InputAuth";
-import ButtonAuth from "../button/ButtonAuth";
-import { signUpAction } from "../../../app/actions";
-// import { useDispatch, useSelector } from "react-redux";
-// import { setSignUpField, resetSignUpForm } from "../../store/slices/authSlice";
+import LabelAuth from "@/app/components/label/LabelAuth";
+import InputAuth from "@/app/components/input/InputAuth";
+import ButtonAuth from "@/app/components/button/ButtonAuth";
+import { signUpAction } from "@/app/actions";
+import { useActionState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Spinner from "@/app/components/spinner/Spinner";
+import { toast } from "react-toastify";
+
+const initialState = {
+  message: "",
+};
 
 export default function FormSignUp() {
-  // const dispatch = useDispatch();
-  // const { fullname, email, password } = useSelector(
-  //   (state) => state.auth.signUp
-  // );
+  const router = useRouter();
+  const [state, formAction, pending] = useActionState(
+    signUpAction,
+    initialState
+  );
 
-  // const handleInputChange = (e) => {
-  //   const { name, value } = e.target;
+  useEffect(() => {
+    if (!state) return;
 
-  //   switch (name) {
-  //     case "fullname":
-  //       dispatch(setSignUpField({ field: "fullname", value }));
-  //       break;
-  //     case "email":
-  //       dispatch(setSignUpField({ field: "email", value }));
-  //       break;
-  //     case "password":
-  //       dispatch(setSignUpField({ field: "password", value }));
-  //       break;
-  //     default:
-  //       break;
-  //   }
-  // };
+    if (state.success) {
+      toast.success(state.message || "Sign up successful!", {
+        theme: "dark",
+        autoClose: 1000,
+      });
 
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   console.log(
-  //     "Test Value" + "\nFullname: ",
-  //     fullname + "\nEmail: ",
-  //     email + "\nPassword: ",
-  //     password
-  //   );
-  //   dispatch(resetSignUpForm());
-  // };
+      const timer = setTimeout(() => {
+        if (state.redirectTo) {
+          router.push(state.redirectTo);
+        }
+      }, 1000);
+
+      return () => clearTimeout(timer);
+    }
+
+    if (!state.success && state.message) {
+      toast.error(state.message || "Sign up failed!", {
+        theme: "dark",
+        autoClose: 1000,
+      });
+    }
+  }, [state, router]);
 
   return (
     <form
       id="signUpForm"
       name="signUpForm"
-      action={signUpAction}
-      // onSubmit={handleSubmit}
+      action={formAction}
       className="flex flex-col gap-4 lg:gap-6 2xl:gap-8"
     >
       <div className="flex flex-col gap-2">
-        <LabelAuth htmlFor="fullname" text="Name" />
+        <LabelAuth htmlFor="fullname" text="Full Name" />
         <InputAuth
           id="fullname"
           name="fullname"
           type="text"
           placeholder="John Doe"
-          // value={fullname}
-          // onChange={handleInputChange}
         />
       </div>
       <div className="flex flex-col gap-2">
@@ -68,8 +69,6 @@ export default function FormSignUp() {
           name="email"
           type="text"
           placeholder="example@email.com"
-          // value={email}
-          // onChange={handleInputChange}
         />
       </div>
       <div className="flex flex-col gap-2">
@@ -79,11 +78,9 @@ export default function FormSignUp() {
           name="password"
           type="password"
           placeholder="At least 8 characters"
-          // value={password}
-          // onChange={handleInputChange}
         />
       </div>
-      <ButtonAuth text="Sign up" />
+      <ButtonAuth disabled={pending} text={pending ? <Spinner /> : "Sign Up"} />
     </form>
   );
 }

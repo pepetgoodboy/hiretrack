@@ -1,12 +1,13 @@
 "use client";
 
-import LabelAuth from "../label/LabelAuth";
-import InputAuth from "../input/InputAuth";
-import ButtonAuth from "../button/ButtonAuth";
+import LabelAuth from "@/app/components/label/LabelAuth";
+import InputAuth from "@/app/components/input/InputAuth";
+import ButtonAuth from "@/app/components/button/ButtonAuth";
 import { signInAction } from "@/app/actions";
 import { useActionState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Spinner from "../spinner/Spinner";
+import Spinner from "@/app/components/spinner/Spinner";
+import { toast } from "react-toastify";
 
 const initialState = {
   message: "",
@@ -20,8 +21,28 @@ export default function FormSignIn() {
   );
 
   useEffect(() => {
-    if (state.success && state.redirectTo) {
-      router.push(state.redirectTo);
+    if (!state) return;
+
+    if (state.success) {
+      toast.success(state.message || "Sign in successful!", {
+        theme: "dark",
+        autoClose: 1000,
+      });
+
+      const timer = setTimeout(() => {
+        if (state.redirectTo) {
+          router.push(state.redirectTo);
+        }
+      }, 300);
+
+      return () => clearTimeout(timer);
+    }
+
+    if (!state.success && state.message) {
+      toast.error(state.message || "Sign in failed!", {
+        theme: "dark",
+        autoClose: 1000,
+      });
     }
   }, [state, router]);
 
@@ -32,7 +53,6 @@ export default function FormSignIn() {
       action={formAction}
       className="flex flex-col gap-4 lg:gap-6 2xl:gap-8"
     >
-      <p aria-live="polite">{state?.message}</p>
       <div className="flex flex-col gap-2">
         <LabelAuth htmlFor="email" text="Email" />
         <InputAuth

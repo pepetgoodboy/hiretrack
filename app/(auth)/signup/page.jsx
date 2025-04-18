@@ -1,5 +1,5 @@
-import FormSignUp from "../../components/form/FormSignUp";
-import AuthLayout from "../../components/layout/AuthLayout";
+import FormSignUp from "@/app/components/form/FormSignUp";
+import AuthLayout from "@/app/components/layout/AuthLayout";
 
 export const metadata = {
   title: "Hire Track | Sign Up",

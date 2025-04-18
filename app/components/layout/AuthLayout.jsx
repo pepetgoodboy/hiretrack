@@ -1,5 +1,5 @@
 import Image from "next/image";
-import BGAuth from "../../../public/bg-auth.webp";
+import BGAuth from "@/public/bg-auth.webp";
 import Link from "next/link";
 
 export default function AuthLayout({
